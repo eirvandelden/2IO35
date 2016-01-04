@@ -1,0 +1,548 @@
+\documentclass[a4paper,twoside,11pt]{book}
+\usepackage{a4wide,amsmath,amssymb,verbatim,oz}
+\usepackage{algorithm}
+\usepackage{listings}
+\usepackage[pdftex]{hyperref}
+\lstset{language=Pascal,basicstyle=\small}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2ex}
+
+\begin{document}
+   \begin{titlepage}
+        {\ }\\[5.0cm]
+        { {\Large OGO 2.2 spring 2009}}\\[0.2cm]
+        {\bf \Huge Specificatiedocument}\\[0.1cm]
+        { {\Large {Technische informatica, TU/e} }}\\[1.0cm]
+        {\ Eindhoven, \today }\\[0.2cm]
+        \begin{flushright}
+            {\bf {\small Group 2 }}\\[0.0cm]
+            {\em {\small Etienne van Delden, 0618959}}\\
+            {\em {\small Edin Dudojevic, 0608206}}\\
+            {\em {\small Jeroen Habraken, 0586866}}\\
+            {\em {\small Dion Jansen, 0590077 }}\\
+            {\em {\small Stef Louwers, 0590864}}\\
+            {\em {\small Anson van Rooij, 0596312}}\\[0.5cm]
+        \end{flushright}
+    \end{titlepage}
+\newpage This page has been left blank.
+    \tableofcontents
+
+\chapter{Introduction}
+\section{The game from the player's point of view}
+This specification concerns a two-player game. The game takes place on an island where foxes live, and dolphins live in the sea surrounding it. Foxes want to eat dolphins, dolphins want to eat foxes. There are tides on the island, so the amount of territory available to both species varies. A dolphin can only catch foxes in the sea and cannot move onto the island. When a dolphin is stranded on the island (because of the tides), it cannot move. Of course, a fox can only catch dolphins on land. When a fox is too far out in the water, it cannot move either. As a player, you control one of the species (your ``team''), and your objective is to have your animals eat all members of the other team.
+% TODO: raar
+
+\section{The rules}
+The game takes place in real time, on a square board, divided into $x$ by $x$ square tiles, where $x$ is a constant. Some of these tiles contain land, the rest contain water and all land tiles are connected (forming ``the island''). Every once in a while, ``the water level rises'': $x$ land tiles turn into water tiles. After a few of these occurrences, ``the water level lowers'': $x$ water tiles turn into land tiles.
+
+A tile can contain a fox or a dolphin. When the game starts, there are a certain amount of foxes on the island and an equal amount of dolphins in the water. A player can ask a member of his team to move to a tile adjacent to its current tile (``making a move'', or ``taking a turn''). After a move, the player must wait for a short time before moving again, to ensure fairness and to encourage thinking about strategy. There is, however, no maximum period of time between a player's turns and the two players' turns can be taken asynchronously.
+
+The animal will do what is asked of it, if it can. Again: a dolphin cannot move onto land, and a fox cannot move too far into the water (more then two steps off the land). Two animals of the same species can never be on the same tile, and a fox can never move into a water tile containing a dolphin. If two animals of different species would land on the same tile in any other case, there are two options but the result will be the same, one of the animals will be eaten and will be removed from the board. On land, the dolphin will be eaten by the fox; in the water, the fox will be the one to go. When the last animal of any team is eaten, the game ends.
+%TODO: raar
+
+\section{The technology}
+\noindent We have designed a number of programs which facilitate the playing of this game by two human players (there is no AI). There is a design for a server program and one for a client program. These communicate with each other through sockets. The server program administrates the board (including the tides), and admits or rejects moves, through the board module. It also starts the game and passes messages between modules through its controller module. When the game is being played, there will be two instances of the client program involved. Client programs show the board to the player through the viewer module, and pass requests to the server through the player-module.
+
+It will be your job to finish one of these programs. The parts still to be made are the board-module (a pascal unit called ``board''), and the player module (a pascal unit called ``player''). This specification concerns (mainly) these parts.
+
+\chapter{Server-Client Interaction}
+
+
+\section{The socket protocol}
+
+\subsection{Introduction}
+This protocol concerns the communication between the server and the clients. We use socket communication in the format defined below.
+
+All communication is sent either by the controller-module (on behalf of the board-module) to a player- or viewer-module, or from a player- or viewer-module to the controller-module (addressing the board-module).
+
+\subsection{Message format}
+All messages have the same format: a string consisting of a header and an optional data part, separated by a single space. Messages are ended by a newline character ({$\backslash$}n)
+
+The header consists of three characters. The first represents the sender of the message, the second contains the addressee of the message, and the third the type of the message.
+
+The characters used for the sender and the addressee are defined in section \ref{addresseecodes}, and the message types are defined in section \ref{messagetypes}
+
+\subsection{Codes for the addressee and sender}
+\label{addresseecodes}
+\begin{itemize}
+\item B for the board unit
+\item D for the dolphin player
+\item E for the dolphin viewer
+\item F for the fox player
+\item G for the fox viewer
+\item P for a new player
+\item Q for a new viewer
+\end{itemize}
+
+\subsection{Message types}
+\label{messagetypes}
+
+\subsubsection{B}
+Type: Board update | server to viewer \\
+Data: The board, see section \ref{serialboardformat} for details of the encoding. \\
+Sent on behalf of: B \\
+Sent to: E or G \\
+\\
+Example message: ``BEB WWWDWLFGWLLGDWDW'', if board size would be 4 \\
+Description of example: The board module sends a board update to the dolphin viewer.
+
+\subsubsection{F}
+Type: Board update | server to viewer \\
+Data: None \\
+Sent on behalf of: B \\
+Sent to: E or G \\
+\\
+Example message: ``BEF'' \\
+Description of example: The board module tells the dolphin viewer to display a ``fail!'' message.
+
+\subsubsection{J}
+Type: Request to join the game | player to server \\
+Data: None \\
+Sent by: P \\
+Addressee: B \\
+\\
+Example message: ``PBJ'' \\
+Description of example: This message is sent right after a new client connects to the server.
+
+\subsubsection{M}
+Type: Move unit | player to server \\
+Data: Two coordinates, both written as two integers seperated by a single space. \\
+Sent by: D or F \\
+Addressee: B \\
+\\
+Example message: ``DBM 4 1 4 2'' \\
+Description of example: The dolphin player asks the board to move the unit at the first coordinate [(4,1)] to the second coordinate [(4,2)].
+
+\subsubsection{N}
+Type: Next turn | server to player \\
+Data: None \\
+Sent on behalf of: B \\
+Sent to: (D and E) or (F and G) \\
+\\
+Example message: ``BDN'' \\
+Description of example: The board announces that the dolphin player's previous move has been processed and that the dolphin player may make another step.
+
+\subsubsection{R}
+Type: View refreshment request | player to server \\
+Data: None \\
+Sent by: D or F \\
+Addressee: B \\
+\\
+Example message: ``DBR'' \\
+Description of example: The dolphin player unit asks the board module to send an updated board to the dolphin viewer.
+
+\subsubsection{S}
+Type: Game end | server to player \\
+Data: The winner: ``D'' or ``F''\\
+Sent on behalf of: B \\
+Addressee: D or F \\
+\\
+Example message: ``FBS F'' \\
+Description of example: The server tells the fox player that the game is over, and that he/she has won.
+
+\subsubsection{T}
+Type: Announce the team | server to (player and viewer)\\
+Data: The team the player will play (``D'' for dolphin or ``F'' for fox), or ``R'' for rejected if the player can not join the game. \\
+Sent on behalf of: B \\
+Sent to: P and Q \\
+\\
+Example message: ``BPT D'' \\
+Description of example: This message assigns the dolphin team to a joining player.
+
+\subsection{Message format of the board}
+\label{serialboardformat}
+In the board update message, the complete board in transmitted to the viewers. In this message the board is encoded as a string where every character represents a tile. The string is of length $n^2$, where $n$ is the board size. The following characters are allowed:
+\begin{itemize}
+\item W: a water tile
+\item L: a land tile
+\item D: a water tile with a dolphin
+\item E: a land tile with a dolphin
+\item F: a land tile with a fox
+\item G: a water tile with a fox
+\end{itemize}
+
+\subsection{Role of the controller}
+The controller is the part in the server responsible for the communication with the clients. It receives the messages from the client and forward them to the board module if necessary. The controller also sends the messages from the board to the clients.
+
+When the game is starting, the controller opens the sockets for the client to connect to and it handles the connecting clients by assigning them a team, or rejecting them if for example a third player tries to join.
+
+\chapter{Player-module}
+A player-module handles the communication from a (human) player of the game to the controller- and board-modules. The player-module is instantiated as a pascal unit named ``player'', which is part of the client program. When the game is being played, two such units are at work, one for each client.
+
+A player-module has no functionality not specified in this document.
+
+Each ``player'' unit has the following variables:
+
+\emph{CanMove}: a Boolean, initialized as FALSE. \emph{CanMove} answers the question ``Can I send a move request?''
+
+\emph{Team}: a Char (representing the team), initialized as ``N'' (No team). Possible values of Team are ``N'', ``D'', and ``F''.
+
+\emph{SelectionX}: an Integer, initialized as 0. Represents a tile recently clicked on.
+
+\emph{SelectionY}: an Integer, initialized as 0. Represents a tile recently clicked on.
+
+Each ``player'' unit has a set of procedures, we will discuss those below.
+
+\section{functions and procedures}
+
+\subsection{Click}
+Informal: When a player clicks on the board in the interface, this is the procedure that formats and sends the generated move request.
+
+Functiondefinition: $procedure Click(Sender: TObject; ACol, ARow: Integer; var  canSelect: Boolean);$
+
+If \emph{canMove} is FALSE, \emph{canSelect} is FALSE and the procedure returns.
+
+\emph{canSelect} is set to TRUE.
+
+If \emph{SelectionX} and \emph{SelectionY} are both 0, \emph{SelectionX} becomes \emph{ACol} and \emph{SelectionY} becomes \emph{ARow}, then the procedure returns.
+
+If \emph{SelectionX} and \emph{SelectionY} are not 0, the message $Team + ``BM'' + $`` ''$ + SelectionX + $`` ''$ + SelectionY + $`` ''$ + ACol + $`` ''$ + ARow$ is sent over the socket connection. Then \emph{canMove} is set to FALSE and the procedure returns.
+%Anson: ik snap dr niks meer van, maar het zal vast kloppen.
+
+\subsection{Connect}
+Informal: This is the procedure that is called when the client is started. It tries to start the communication.
+
+Functiondefinition: $procedure Connect(I: String; P: Integer; var Success: Boolean)$
+
+This procedure creates and initialises a socket and tries to initiate a socket connection to the socket on the IP-Address given in string \emph{I} and Port Number \emph{P}. If the connection is made successfully, a thread is made to listen to incoming messages, as defined in section \ref{player:socketinput}.
+
+After that, the message $``PCJ''$ is sent over the socket connection.
+
+If everything succeeds, TRUE is returned, if not, FALSE.
+
+\subsection{Stop}
+\label{Stop}
+Informal: This is the procedure that is called when the client is stopped. It tries to end the communication neatly.
+
+Functiondefinition: $procedure Stop;$
+
+This procedure disconnects the socket, then calls viewer.finish (a procedure in the unit viewer, in the same program), without arguments.
+% viewer.finish even uitzoeken hoe dat gaat?
+
+\section{Socketinput}
+\label{player:socketinput}
+
+If and when the ``player'' unit gets input from the socket, it does the following:
+
+\subsection{Team}
+If the socketinput is $``CPT '' + A$, where $A$ is a Char, then Team becomes $A$. Note the space at the fourth place in the input string.
+
+\subsection{CanMove}
+If the socketinput is $``B'' + Team + ``N''$, then $CanMove$ becomes TRUE.
+
+\subsection{Stop}
+If the socketinput is $``B'' + Team + ``S''$, then procedure $Stop$ (see \ref{Stop}) is started.
+
+Other socket input than that of the kind specified above should be discarded.
+
+\chapter{Boardmodule}
+%Copypaste hier de nieuwste versie voor het inleveren.
+\section{The specification}
+\label{sub:the_board}
+\begin{class}{Board}
+% ============= TYPES ==============
+Surface == Water | Land \\
+Occupant == Fox | Dolphin | Empty \\
+Player == Fox | Dolphin \\
+NumberOfPlayers == 0 | 1 | 2 \\
+Status == WaitingForPlayers | InGame | EndGame \\
+Tile: Occupant \times Surface \\
+Coordinate: \mathbb{N} \times \mathbb{N} \\
+size: BoardSize \\
+status: Status \\
+numberOfPlayers: NumberOfPlayers \\
+floodstate: \mathbb{N}\\
+Player1Time: Timer \\
+Player2Time: Timer \\
+% ============= AXIOMS =============
+\begin{axdef}
+    MinBoardSize: \mathbb{N} \\
+    \ST
+    MinBoardSize = 10
+\end{axdef} \\
+\begin{axdef}
+    MaxBoardSize: \mathbb{N} \\
+    \ST
+    MaxBoardSize = 50
+\end{axdef} \\
+\begin{axdef}
+    BoardSize : \mathbb{N}
+    \ST
+    MinBoardSize \leq BoardSize \leq MaxBoardSize
+\end{axdef} \\
+% ============= FIELDS =============
+\begin{axdef}
+board: Coordinate \ffun Tile \\
+\ST
+(\forall (x_1,y_1),(x_2,y_2) : \dom board |\\
+\ \ \ tile(x_1,y_1).1=Land \wedge tile(x_2,y_2).1=Land \bullet (x_1,y_1)$path$(x_2,y_2))
+\end{axdef}\\
+% ============= INIT ===============
+\end{class} \\
+
+Where $(x_1,y_1)path(x_2,y_2)$ is defined as: there exists a path containing only land tiles from $(x_1,y_1)$ to $(x_2,y_2)$. A path is formed by moving only left, right, up or down over the board, moving from one tile to another. \\ % kan recursief?
+
+All functions in the board class are specified and explained in sections \ref{sub:helpful_functions} to \ref{sub:moving}
+
+% subsection the_board (end)
+
+\subsection{Helpful Functions} % (fold)
+\label{sub:helpful_functions}
+
+We have added a number of different functions that will only be called by other functions. These are solely used by the board module. \\ \\
+
+\subsubsection{numberOfOccupants} % (fold)
+\label{ssub:numberofoccupants}
+\begin{schema}{numberOfOccupants}
+    t : Tile \\
+    o? : Occupant \\
+    n! : \mathbb{N} \\
+    \ST
+    t \in \ran board \wedge t.1=o? \\
+    n! = \#(board \triangleright \{t\}) \\
+\end{schema}\\
+ Returns the number of occupants of the given type. \\
+
+% subsubsection numberofoccupants (end)
+
+\subsubsection{island} % (fold)
+\label{ssub:island}
+\begin{schema}{island}
+    t : Tile \\
+    i! : Coordinate \ffun Tile  \\
+    \ST
+    (t \in \ran board \wedge t.2=Land) \\
+    i! = board \triangleright \{t\} \\
+\end{schema}\\
+Returns the set of coordinates that make up the island. \\
+% subsubsection island (end)
+
+\subsubsection{tile} % (fold)
+\label{ssub:tile}
+\begin{schema}{tile}
+    x? : \mathbb{N} \\
+    y? : \mathbb{N} \\
+    t : Tile \\
+    o! : Tile  \\
+    \ST
+    (t \in \ran ((x,y) \triangleleft board) \\
+    o! = t \\
+\end{schema}\\
+Returns the tile for the given coordinate.
+
+% subsubsection tile (end)
+
+% subsection helpful_functions (end)
+
+\subsection{Initialisation} % (fold)
+\label{sub:initialisation}
+\begin{schema}{INIT}
+    status' = WaitingForPlayers \\
+    numberOfPlayers' = 0 \\
+    floodstate' = 0\\
+    % 1<=#dol=#fox
+    NumberOfOccupants(Dolphin)=NumberOfOccupants(Fox)=BoardSize \\
+    % alle vossen op land en alle dolfijnen in water bij de start
+    (\forall (x,y): \dom board \bullet tile(x,y).1 = Land \Rightarrow tile(x,y).2 \neq Dolphin)\\
+    (\forall (x,y) : \dom board \bullet tile(x,y).1 = Water \Rightarrow tile(x,y).2 \neq Fox)\\
+\end{schema}\\
+\emph{INIT} initialises the board by setting all important variables. It guarantees that no Dolphin starts on Land and no Fox in the Water. Initially, there are $BoardSize$ Foxes and $BoardSize$ Dolphins
+
+% subsection initialisation (end)
+
+\subsection{Flood} % (fold)
+\label{sub:flood}
+\begin{schema}{Flood}
+    \Delta floodstate \\
+    \Delta island \\
+    \ST
+    floodstate' = (floodstate +1) \mod 6 \\
+    ((floodstate' \leq 2 \wedge (\#island' = \#island-boardsize) \vee \\
+    (floodstate' \geq 3 \wedge (\#island' = \#island+boardsize))
+\end{schema} \\
+\emph{Flood} is the function that deals with changing land to water and vice versa. When \emph{floodstate} is 0,1 or 2 there is flooding. When \emph{floodstate} is 3,4,5 there is ebbing.
+
+% subsection flood (end)
+
+\subsection{Update Status} % (fold)
+\label{sub:update_status}
+\begin{schema}{UpdateStatus}
+    \ST
+% Anson: er missen tussen de statements over numberofplayers/status en de statements over status' duidelijk logische tekens. Wat die tekens moeten zijn (implicatie, en, of), is mij niet geheel duidelijk.
+    ((numberOfPlayers < 2) \wedge (Status = InGame)\\
+    \ \ \ Status' = EndGame) \vee\\
+    ((numberOfPlayers = 2) \wedge (Status = WaitingForPlayers) \\
+    \ \ \ Status' = InGame) \vee\\
+    ((numberOfPlayers = 2) \wedge (Status = Ingame) \wedge \\
+    \ \ \ (NumberOfOccupants(Dolphin)=0 \vee NumberOfOccupants(Fox)=0)\\
+    \ \ \ Status'=EndGame)\\
+\end{schema} \\
+
+The \emph{UpdateStatus} procedure checks when called if there is need for a state-change. It checks the number of players, the number of elements and in which state the game currently resides.
+
+If the number of players is smaller than $2$ but the game is \emph{InGame}, this means that a player has left the game while playing. The game needs to end and \emph{UpdateStatus} will set the \emph{Status} to \emph{EndGame} which means the only player left gets a message the game has ended and the board will no longer process messages from the clients.
+
+If the number of players is equal to $2$ and the \emph{Status} is equal to \emph{WaitingForPlayers} this means that the board was waiting for players, but it has them both now. So now the game can start and \emph{UpdateStatus} will set the \emph{Status} to \emph{InGame}. Now the players will get a message the game has started and the board will start processing messages received from the clients.
+
+If the number of players is equal to $2$ and the \emph{Status} is \emph{InGame} but one of the players has no animals anymore this means a player has won. Therefore the board will end the game by setting Status to \emph{EndGame}. The clients will receive a message that the game has ended and the board will no longer process messages from the clients.
+
+\subsection{Initialisation} % (fold)
+\label{sub:initialisation}
+
+\emph{INIT} initialises the board by setting all important variables. It guarantees that no Dolphin starts on Land and no Fox in the Water. Initially, there are $BoardSize$ Foxes and $BoardSize$ Dolphins.
+
+% subsection initialisation (end)
+
+
+\subsection{Joining} % (fold)
+\label{sub:joining}
+
+\begin{schema}{Join}
+  PlayerType!: Char
+  \ST
+  (NumberOfPlayers = 0) \Rightarrow (PlayerType! = F \wedge NumberOfPlayers' = NumberOfPlayers+ 1) \\
+  (NumberOfPlayers = 1) \Rightarrow (PlayerType! = D \wedge NumberOfPlayers' = NumberOfPlayers + 1 \wedge\\ UpdateViews) \\
+  (NumberOfPlayers = 2) \Rightarrow (PlayerType! = R)
+\end{schema}
+
+When a request to join has been filed at the Board, it calls the function \emph{Join}.
+Join checks the current number of Players and acts accordingly; Assigns Foxes to that player when there are 0 players, assign Dolphins when 1 player has already joined or return Reject when there are 2 players already playing.
+
+% subsection joining (end)
+
+\subsection{Disconnecting} % (fold)
+\label{sub:disconnecting}
+
+\begin{schema}{Disconnect}
+  \ST
+  NumberOfPlayers' = NumberOfPlayers - 1 \\
+  UpdateViews \\
+\end{schema}
+
+\emph{Disconnect} disconnects a player. It lowers the number of players and changes the status. When a player leaves during a game, the other player automatically wins.
+
+% subsection disconnecting (end)
+
+\subsection{Taking Turns} % (fold)
+\label{sub:taking_turns}
+
+\begin{schema}{Turn}
+  MessageType?: Char \\
+  Player?: Char \\
+  from?: Coordinate \\
+  to?: Coordinate \\
+  status! : \mathbb{B} \\
+  \ST
+  ((Status = InGame) \wedge \\
+  ((player? = F) \wedge (MessageType? = M) \wedge (Player1Time = 0)) \Rightarrow \\
+   (TryMove(from?, to?, Fox) \wedge (Player1Time' = 1))\\
+  ((player? = D) \wedge (MessageType? = M) \wedge (Player2Time = 0)) \Rightarrow \\ (TryMove(from?, to?, Dolphin) \wedge (Player1Time' = 1))\\
+  \vee IllegalMove \\
+\end{schema}
+The function \emph{Turn} handles fairness. It uses 2 timers, \emph{Player1Time} and \emph{Player2Time}. When a player requests a move, the timer is set on a pre-defined value and then TryMove is called. A player's turn ends when his timer has reached 0. The player is notified that he can Move again. Only when a player's time is 0, can a move be done. For taking turns, it does not matter whether a move is valid or not.\\
+The timers are not further specified in Z (because of Z restrictions): All timers should be lowered at specific intervals. When a PlayerTimer reaches 0, a message needs to be sent to the player that he may move again.
+
+% subsection taking_turns (end)
+
+\subsection{Moving} % (fold)
+\label{sub:moving}
+
+% ============= SCHEMAS ============
+% ===== nieuw stukje van eiji
+$TryMove \triangleq (CanMove \wedge (Move  \wedge UpdateViews \wedge UpdateStatus)) \vee IllegalMove$ \\
+
+with \emph{CanMove} defined as: \\
+$CanMove \triangleq (AdjacentTile \wedge diffBeast \wedge (DolphinToSea \vee FoxMovement))$ \\
+
+\emph{TryMove} is called whenever a player wants to move. It first checks if the move is valid (by calling \emph{CanMove}). If it is, Move is executed (and checks wether there is now a winner), else a message is send to the player that he has made an invalid move.\\
+
+\emph{CanMove} consists of several smaller functions, to check if a move is valid or not, by checking the to? coordinate if it is adjacent, if there is a different occupant and if the creature being moved, moves according to it's movement set.
+
+\subsubsection{Adjacent Tiles} % (fold)
+\label{ssub:adjacent_tiles}
+\begin{schema}{AdjacentTile}
+    from? : Coordinate \\
+    to? : Coordinate \\
+    report! : \mathbb{B} \\
+    \ST
+    report! = (| from.1 - to.1 | + | from.2 - to.2 | = 1) \\
+\end{schema}
+\emph{AdjacentTile} checks if the movement requested is to an adjacent tile.
+
+% subsubsection adjacent_tiles (end)
+
+\subsubsection{Different Beasts} % (fold)
+\label{ssub:different_beasts}
+\begin{schema}{diffBeast}
+    from? : Coordinate \\
+    to? : Coordinate \\
+    report! : \mathbb{B} \\
+    \ST
+    report! = (tile(from.1, from.2).1 \neq tile(to.1, to.2).1)
+\end{schema}
+\emph{diffBeast} checks the occupant of the \emph{to} tile. If it is different than the creature being moved, than it is a valid move. Please note that ``\emph{Empty}'' is also an occupant and thus, this checks both legal movements to an empty spot and eating a different creature.
+
+% subsubsection different_beasts (end)
+
+\subsubsection{Dolphin From Sea To Sea} % (fold)
+\label{ssub:dolphin_from_sea_to_sea}
+\begin{schema}{DolphinToSea}
+    from? : Coordinate \\
+    to? : Coordinate \\
+    player?: Player \\
+    report! : \mathbb{B} \\
+    \ST
+    report! = tile(to.1, to.2).2 = Water \\
+    \wedge tile(from.1, from.2).2 = Water \\
+    \wedge tile(from.1, from.2).1 = Dolphin\\
+\end{schema}
+\emph{DolphinToSea} looks to the creature that is being moved, checks if it is a Dolphin in the Water and if it is moving to Water. A Dolphin cannot strand itself on land, nor can it move when on land.
+% subsubsection dolphin_from_sea_to_sea (end)
+
+\subsubsection{Movements of the fox} % (fold)
+\label{ssub:movements_of_the_fox}
+
+\begin{schema}{FoxMovement}
+    from? : Coordinate \\
+    to? : Coordinate \\
+    player? : Player \\
+    report! : \mathbb{B} \\
+    \ST
+    Neighbourhood = \{ z \in dom(board) : \exists{x,y} (x,y \in \mathbb{N} : ((from.1 - x) + (from.2 - y) \leq 2) \wedge \\ z.1 = x \wedge z.2=y : z) \} \\
+      report! = (player? = Fox) \wedge \\
+      (tile(from.1, from.2).1=Fox) \wedge \\
+      \exists{z} (z \in Neighbourhood : (tile(z.1, z.2).2=Land) \wedge \\
+      ((tile(to.1, to.2).1 \neq Dolphin) \vee (tile(to.1, to.2).2 \neq Water))) \\
+\end{schema}
+\emph{FoxMovement} checks \emph{all} the possible movements of a Fox. A Fox can move on the land, into water, in water and to land. To only acception is when a Fox in the water tries to eat a Dolphin, that is not allowed. FoxMovement checks this by making a new set, with all tiles that this creature can reach if it would make two steps. If there is a land tile within this set, a Fox can move. If the Fox is on the land, this is always true. If it is in the Water, a land tile must be reachable. \\
+
+% subsubsection movements_of_the_fox (end)
+
+\subsubsection{Update Views} % (fold)
+\label{ssub:update_views}
+
+\emph{UpdateViews} calls a function in the Controller to send a new version of the Board to the Viewers, according to the specified protocol. \emph{(Note: there is no Z-schema associated with this specification)}
+
+% subsubsection update_views (end)
+
+\subsubsection{Move} % (fold)
+\label{ssub:move}
+
+\begin{schema}{Move}
+    player? : Player\\
+    from? : Coordinate\\
+    to? : Coordinate\\
+\ST
+tile(from.1, from.2)'.1=Empty \wedge tile(to.1, to.2)'.1=tile(from.1, from.2).1 \\
+\end{schema}
+\emph{Move} makes the requested move.
+
+% subsubsection move (end)
+
+\subsubsection{Illegal Move} % (fold)
+\label{ssub:illegal_move}
+\emph{IllegalMove} calls a function in the Controller to send a message to the corresponding viewer that the player's move is invalid.
+% subsubsection illegal_move (end)
+
+\end{document}

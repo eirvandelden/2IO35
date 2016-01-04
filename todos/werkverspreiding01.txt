@@ -1,0 +1,10 @@
+Implementatie
+=============
+- (1) Bord		: stef, anson
+- (2) Controller: dion
+- (2) Player	: jeroen
+- (2) Viewer	: edin
+
+Doc
+===
+Commentaar		: etienne

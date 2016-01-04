@@ -1,0 +1,76 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage{a4wide,amsmath,amssymb,verbatim,algorithm,oz}
+
+\begin{document}
+\begin{abstract}
+  This document contains the specification for the board module for our game.
+\end{abstract}
+
+\section{CanMove} % (fold)
+\label{sec:canmove}
+
+\begin{class}{CanMove}
+% ============= TYPES ==============  
+  
+  \begin{schema}{Adjacent Tile}
+    
+  \end{schema}
+\end{class}
+
+% section canmove (end)
+
+\section{The specification}
+\begin{class}{Board}
+% ============= TYPES ==============
+Surface == Water | Land \\
+Occupant == Fox | Dolphin | Empty \\
+Tile: Occupant \times Surface \\
+Coordinate: \mathbb{N} \times \mathbb{N} \\
+Player == Fox | Dolphin \\
+NumberOfPlayers == 0 | 1 | 2 \\
+Status == WaitingForPlayers | InGame | EndGame \\
+% ============= AXIOMS =============
+\begin{axdef}
+    MinBoardSize: \mathbb{N} \\
+    \ST
+    MinBoardSize = 10
+\end{axdef} \\
+\begin{axdef}
+    MaxBoardSize: \mathbb{N} \\
+    \ST
+    MaxBoardSize = 50
+\end{axdef} \\
+\begin{axdef}
+    BoardSize : \mathbb{N}
+    \ST
+    MinBoardSize \leq BoardSize \leq MaxBoardSize
+\end{axdef} \\
+% ============= FIELDS =============
+\begin{axdef}
+board: Coordinate \ffun Tile \\
+\ST
+(\forall _{(x_1,y_1)}\in dom(board) : \{Land\} \lhd ran(board) \bullet\\
+\ \ \ (\forall _{(x_2,y_2)}\in dom(board) : \{Land\} \lhd ran(board) \bullet\\
+\ \ \ (x_1,y_1)path(x_2,y_2)))
+\end{axdef}\\
+size: BoardSize \\
+status: Status \\
+numberOfPlayers: NumberOfPlayers \\
+% ============= INIT ===============
+\begin{init}
+    status = WaitingForPlayers \\
+    numberOfPlayers = 0 \\
+\end{init}\\
+% ============= SCHEMAS ============
+\begin{schema}{TryMove}
+    player? : Player\\
+    from? : Coordinate\\
+    to? : Coordinate\\
+    status! : \mathbb{B} \\
+\ST
+| from.1 - to.1| + |from.2-to.2| = 1 \\
+\end{schema}\\
+\end{class}\\
+
+Where $(x_1,y_1)path(x_2,y_2)$ is defined as: there exists a path containing only land tiles from $(x_1,y_1)$ to $(x_2,y_2)$. A path is formed by moving only left, right, up or down over the board, moving from one tile to another. % kan recursief?
+\end{document}

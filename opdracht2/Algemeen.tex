@@ -1,0 +1,109 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage{a4wide,amsmath,amssymb,verbatim}
+\usepackage{algorithm}
+\usepackage{listings}
+\lstset{language=Pascal,basicstyle=\small}
+
+\begin{document}
+   \begin{titlepage}
+        {\ }\\[5.0cm]
+        { {\Large OGO 2.2 spring 2009}}\\[0.2cm]
+        {\bf \Huge Specificatie Assignment 2 }\\[0.1cm]
+        { {\Large {Technische informatica, TU/e} }}\\[1.0cm]
+        {\ Eindhoven, \today }\\[0.2cm]
+        \begin{flushright}
+            {\bf {\small Group 2 }}\\[0.0cm]
+            {\em {\small Etienne van Delden, 0618959}}\\
+            {\em {\small Edin Dudojevic, 0608206}}\\
+            {\em {\small Jeroen Habraken, 0586866}}\\
+            {\em {\small Dion Jansen, 0590077 }}\\
+            {\em {\small Stef Louwers, 0590864}}\\
+            {\em {\small Anson van Rooij, 0596312}}\\[0.5cm]
+        \end{flushright}
+    \end{titlepage}
+\newpage
+    \setcounter{tocdepth}{2}
+
+    \tableofcontents
+\newpage
+
+\section{Game} % (fold)
+\label{sec:game}
+  \subsection{Movement} % (fold)
+  \label{sub:movement}
+    \begin{itemize}
+      \item We define neighboring tiles to be right next another tile vertically or horizontally.
+      \item Movement is done to a neighboring tile
+    \end{itemize}
+  % subsection movement (end)
+% section game (end)
+
+\section{Board}
+  \subsection{General}
+    \begin{itemize}
+        \item Two types of tiles: land, water
+        \item Two types of animals: dolphin, fox
+        \item Two types of occupants: dolphin, fox, empty
+    \end{itemize}
+
+    \begin{verbatim}
+        type tile = {land,water}
+        type animal = {dolphin,fox}
+        type occupant = {dolphin,fox,empty}
+    \end{verbatim}
+
+    \subsection{Global Invariants}
+    \begin{itemize}
+        \item One island
+        \item No two animals of the same type are allowed to be on the same tile
+        \item We look at separate sockets for both players. Fairness is solved by look at a socket if there is something on it and then switching to the other socket.
+    \end{itemize}
+
+  \subsection{Initialization}
+
+    \begin{itemize}
+        \item Board is of size $N \times N$, $N \geq 10$
+        \item The number of land tiles is equal to $\lfloor \frac{N^2}{2} \rfloor$
+        \item All foxes on land, all dolphins in water
+        \item Number of foxes is equal to the number of dolphins and is between $1$ and $\frac{N^{2}}{4}$
+        \item On initialization, there is neither low or high tide.
+    \end{itemize}
+
+
+
+  \subsection{Gameplay \& Control} % (fold)
+  \label{sec:gameplay_control}
+
+    \begin{itemize}
+      \item A turn consists of a command given to the board \& a time-out time
+      \item A request for move consists of selecting a creature and moving it to a certain spot. This is an atomic action
+    \end{itemize}
+
+
+\section{Player 1: Foxes}
+
+\section{Player 2: Dolphins}
+
+\section{Communication}
+
+\section{Programma opzet} % (fold)
+\label{sec:programma_opzet}
+Wij gaan 2 programma's maken:
+\begin{itemize}
+\item \textbf{Een client} \\
+De client verzorgt alle interactie met de gebruiker. Het tekenen van het speelbord en het opvangen van muis / toetsenbord commando's. Hij communiceerd met de server (via een socket verbinding) door gebruikersacties te sturen, en hij krijgt van de server updates voor het speelbord.
+\item \textbf{Een server} \\
+De server bestaat intern uit 4 losse modules:
+  \begin{itemize}
+  \item \textbf{De controller} \\
+  De controller communiceerd met 2 clients (de vossen en de dolfijnen) via een socket verbinging, en vertaald inkomende berichten naar functie-aanroepen van de andere units, en hij stuurt updates van het bord naar de clients.
+  \item \textbf{De 2 spelers} \\
+  Deze 2 modules zijn identiek (qua specificatie). Zij handelen de input die van de clients komen af en sturen commando's naar de bord module. Ook kunnen ze informatie over het speelbord bij de bord module opvragen.
+  \item \textbf{Het bord} \\
+  De bord module beheerd het speelbord. Hij handelt aanvragen voor zetten van de spelers af en stuurt updates van het speelbord naar de clients.
+  \end{itemize}
+\end{itemize}
+
+De client en de controller module moeten wij zelf maken, en de 2 speler modules en de bord module moeten wij specificeren.
+
+\end{document}

@@ -1,0 +1,26 @@
+\documentclass[11pt,oneside,a4paper]{article}
+\usepackage[dutch]{babel}
+
+\begin{document}
+\textbf{{\LARGE{Agenda Vergadering 3 maart 2009}}}\\ \\
+\textbf{Voorzitter}: Dion\\
+\textbf{Notulist}: Edin\\
+\begin{enumerate}
+    \item \textbf{Opening} 13:53
+        \subitem \textbf{Vaststellen aan- en afwezigheid}
+    \item \textbf{Definitief vaststellen van de agenda}
+    \item \textbf{Notulen}
+        \subitem \textbf{Bespreken van de notulen van de vorige vergadering}
+    \item \textbf{Overige mededelingen}
+        \subitem \textbf{Tutor}
+            \subsubitem 14.30 HG 5.59 Bijeenkomst met coordinator en andere groepjes
+            \subsubitem Waarschijnlijk conflict met introductie OGO 3.1; we krijgen nog mailtje
+        \subitem \textbf{Groep}
+            \subsubitem -
+    \item \textbf{Planning}
+        \subitem \textbf{Opdracht 2}
+            \subsubitem Opdeling werk specificatie
+    \item \textbf{W.v.t.t.k}
+    \item \textbf{Sluiting} 14:01
+\end{enumerate}
+\end{document} 

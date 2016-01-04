@@ -1,0 +1,182 @@
+\documentclass[a4paper,10pt]{report}
+
+\usepackage{algorithm}
+\usepackage{listings}
+\lstset{language=Pascal}
+
+% Title Page
+\title{}
+\author{}
+
+
+\begin{document}
+\maketitle
+
+\chapter{Code}
+
+\begin{algorithm}
+\caption{Framework for group 1}
+\label{fr:gr1}
+\begin{lstlisting}
+program Input (Output);
+
+uses
+    Process;
+
+var
+    F: text;
+    c: char;
+    i: integer;
+    mid: integer;
+
+begin
+    if (ParamCount <> 1) then begin
+        WriteLn('Please specify an input file');
+        Exit
+    end;
+
+    Assign (F, ParamStr (1));
+    Reset (F);
+
+    Initialize ();
+    while not EOF (F) do begin
+        Read (F, i);
+        Read (F, c);
+        Add (i);
+    end;
+    Sort ();
+    mid := Median ();
+    if (mid = nil) then begin
+        WriteLn('No third power in the input file');
+    end else begin
+        WriteLn(mid);
+    end;
+
+    Close (F);
+end.
+\end{lstlisting}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Implementation for group 1}
+\label{imp:gr1}
+\begin{lstlisting}
+unit implementation;
+
+interface
+
+uses
+  Math;
+
+var
+  A: array of integer;
+
+implementation
+
+procedure Add(var n: Integer);
+var
+  i : Integer;
+begin
+  i := 0;
+  while ( Power(i,3) < abs(n) ) do i := i + 1;
+  if (Power(i,3) = abs(n)) then begin
+    i := 0;
+    while ( i < length(A)) and ( A[i] <> n ) do i := i + 1;
+    if (i = length(A)) then begin
+      setlength(A, length(A)+1);
+      A[length(A)-1] := n;
+    end;
+  end;
+end;
+
+procedure Sort;
+  var i, j, key: Integer;
+begin
+  for j:= 1 to length(A)-1 do
+  begin
+    key := A[j];
+    i := j - 1;
+    while  (i>=0) and (A[i] > key) do begin
+      A[i+1] := A[i];
+      i := i - 1;
+    end;
+    A[i+1] := key;
+  end;
+end;
+
+function Median(): Integer;
+var
+  result: integer;
+begin
+  if (length(A)=0) then result := -1
+  else result := A[floor(length(A)/2)];
+  Median := result;
+end;
+
+end.
+\end{lstlisting}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Framework for group 2}
+\label{fr:gr2}
+\begin{lstlisting}
+program mdm;
+
+uses
+  SysUtils;
+
+type
+  ainteger = array of integer;
+
+procedure ReadFile(var f: Text; var B: ainteger);
+var
+  n, i: integer;
+begin
+  i := 0;
+  while not Eof(f) do begin
+    while not Eoln(f) do begin
+      read(f, n);
+      setlength(B,i+2);
+      B[i] := n;
+      i := i + 1;
+    end;
+  end;
+end;
+
+var
+  A: ainteger;
+  dm: Integer;
+  inFile: Text;
+  outFile: Text;
+begin
+  AssignFile(inFile, 'invoer.txt');
+  AssignFile(outFile, 'uitvoer.txt');
+  Rewrite(outFile);
+  Reset(inFile);
+
+  ReadFile(inFile, A);
+  dm := middelste_derde_macht(A);
+
+  write(dm);
+  write(outFile, dm);
+
+  CloseFile(inFile);
+  CloseFile(outFile);
+end.
+\end{lstlisting}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Implementation for groups 2}
+\label{imp:gr2}
+\begin{lstlisting}
+function middelste_derde_macht(A: Array of Integer): Integer;
+begin
+    middelste_derde_macht := -1
+end;
+\end{lstlisting}
+\end{algorithm}
+
+
+\end{document}

@@ -1,0 +1,308 @@
+object Form1: TForm1
+  Left = 285
+  Height = 582
+  Top = 165
+  Width = 703
+  BorderStyle = bsSingle
+  Caption = 'Dolfox Game'
+  ClientHeight = 582
+  ClientWidth = 703
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Position = poDesktopCenter
+  LCLVersion = '0.9.26.2'
+  Visible = True
+  object OGO: TLabel
+    Left = 600
+    Height = 14
+    Top = 544
+    Width = 90
+    Alignment = taRightJustify
+    Caption = 'OGO 2.2 - Groep 2'
+    ParentColor = False
+  end
+  object TUe: TLabel
+    Left = 630
+    Height = 14
+    Top = 560
+    Width = 60
+    Alignment = taRightJustify
+    Caption = 'TU/e - 2009'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 672
+    Height = 14
+    Top = 448
+    Width = 18
+    Caption = 'test'
+    ParentColor = False
+  end
+  object GameBox: TGroupBox
+    Left = 568
+    Height = 86
+    Top = 11
+    Width = 129
+    Caption = 'Game'
+    ClientHeight = 68
+    ClientWidth = 125
+    TabOrder = 0
+    object LabelPlayerText: TLabel
+      Left = 8
+      Height = 13
+      Top = 16
+      Width = 36
+      Caption = 'Player'
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object LabelPlayerID: TLabel
+      Left = 112
+      Height = 13
+      Top = 16
+      Width = 6
+      Alignment = taRightJustify
+      Caption = '1'
+      ParentColor = False
+    end
+    object LabelAnimalText: TLabel
+      Left = 8
+      Height = 13
+      Top = 32
+      Width = 38
+      Caption = 'Animal'
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object LabelAnimalType: TLabel
+      Left = 80
+      Height = 13
+      Top = 32
+      Width = 36
+      Alignment = taRightJustify
+      Caption = 'Dolphin'
+      ParentColor = False
+    end
+    object LabelScoreText: TLabel
+      Left = 8
+      Height = 13
+      Top = 64
+      Width = 34
+      Caption = 'Score'
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object LabelScore: TLabel
+      Left = 110
+      Height = 13
+      Top = 64
+      Width = 6
+      Alignment = taRightJustify
+      Caption = '0'
+      ParentColor = False
+    end
+    object LabelSizeText: TLabel
+      Left = 8
+      Height = 13
+      Top = 48
+      Width = 25
+      Caption = 'Size'
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object LabelSize: TLabel
+      Left = 104
+      Height = 13
+      Top = 48
+      Width = 12
+      Alignment = taRightJustify
+      Caption = '50'
+      ParentBidiMode = False
+      ParentColor = False
+    end
+  end
+  object BoardGrid: TStringGrid
+    Cursor = crArrow
+    Left = 8
+    Height = 553
+    Top = 16
+    Width = 553
+    ColCount = 50
+    DefaultColWidth = 10
+    DefaultRowHeight = 10
+    FixedCols = 0
+    FixedRows = 0
+    RowCount = 50
+    TabOrder = 1
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+  end
+  object ConnectionBox: TGroupBox
+    Left = 568
+    Height = 137
+    Top = 184
+    Width = 129
+    Caption = 'Connection'
+    ClientHeight = 119
+    ClientWidth = 125
+    TabOrder = 2
+    object LabelServerPort: TLabel
+      Left = 64
+      Height = 13
+      Top = 58
+      Width = 53
+      Alignment = taRightJustify
+      Caption = 'Server Port'
+      ParentColor = False
+    end
+    object LabelServerIP: TLabel
+      Left = 73
+      Height = 13
+      Top = 18
+      Width = 44
+      Alignment = taRightJustify
+      Caption = 'Server IP'
+      ParentColor = False
+    end
+    object ButtonConnect: TButton
+      Left = 54
+      Height = 25
+      Top = 104
+      Width = 67
+      Caption = 'Connect'
+      TabOrder = 0
+    end
+    object FieldIP: TEdit
+      Left = 32
+      Height = 21
+      Top = 32
+      Width = 89
+      MaxLength = 15
+      TabOrder = 1
+    end
+    object FieldPort: TEdit
+      Left = 32
+      Height = 21
+      Top = 72
+      Width = 89
+      MaxLength = 5
+      TabOrder = 2
+    end
+  end
+  object GroupBox1: TGroupBox
+    Left = 568
+    Height = 73
+    Top = 104
+    Width = 129
+    Caption = 'Animals'
+    ClientHeight = 55
+    ClientWidth = 125
+    Color = clBtnFace
+    ParentColor = False
+    TabOrder = 3
+    object Image1: TImage
+      Left = 8
+      Height = 17
+      Hint = 'Advantage on land'
+      Top = 24
+      Width = 17
+      HelpType = htKeyword
+      ParentShowHint = False
+      Picture.Data = {
+        07544269746D617076010000424D760100000000000036000000280000000A00
+        00000A000000010018000000000040010000130B0000130B0000000000000000
+        0000FFFFFFFFFFFFC3C3E14F4FA81B1B8E1C1C8E5353A9C8C8E4FFFFFFFFFFFF
+        4D45FFFFFF9292C90202810000800000800000800000800303819B9BCDFFFFFF
+        4D45CBCBE5030381000080000080000080000080000080000080050582D3D3E9
+        4D455C5CAE0000800000800000800000800000800000800000800000806767B3
+        4D4529299400008000008000008000008000008000008000008000008033339A
+        4D452A2A9500008000008000008000008000008000008000008000008035359A
+        4D456262B10000800000800000800000800000800000800000800000806C6CB6
+        4D45D2D2E9050582000080000080000080000080000080000080080884DADAED
+        4D45FFFFFFA0A0CF050582000080000080000080000080070783A8A8D4FFFFFF
+        4D45FFFFFFFFFFFFD0D0E86060B02B2B962C2C966363B1D5D5EAFFFFFFFFFFFF
+        4D45
+      }
+      ShowHint = True
+    end
+    object Image2: TImage
+      Left = 8
+      Height = 17
+      Hint = 'Advantage on water'
+      Top = 48
+      Width = 17
+      ParentShowHint = False
+      Picture.Data = {
+        07544269746D617076010000424D760100000000000036000000280000000A00
+        00000A000000010018000000000040010000130B0000130B0000000000000000
+        0000FFFFFFFFFFFFFFDADAFF6C6CFF3535FF3535FF6B6BFFDADAFFFFFFFFFFFF
+        4D45FFFFFFFFB0B0FF0909FF0000FF0000FF0000FF0000FF0909FFAFAFFFFFFF
+        4D45FFE0E0FF0A0AFF0000FF0000FF0000FF0000FF0000FF0000FF0A0AFFDFDF
+        4D45FF7676FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF7474
+        4D45FF4141FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF4040
+        4D45FF4444FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF4343
+        4D45FF7E7EFF0000FF0000FF0000FF0000FF0000FF0000FF0000FF0000FF7D7D
+        4D45FFE8E8FF1111FF0000FF0000FF0000FF0000FF0000FF0000FF1111FFE7E7
+        4D45FFFFFFFFC2C2FF1313FF0000FF0000FF0000FF0000FF1212FFC1C1FFFFFF
+        4D45FFFFFFFFFFFFFFEAEAFF8585FF4E4EFF4E4EFF8585FFEAEAFFFFFFFFFFFF
+        4D45
+      }
+      ShowHint = True
+    end
+    object Label1: TLabel
+      Left = 24
+      Height = 13
+      Top = 23
+      Width = 17
+      Caption = 'Fox'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 24
+      Height = 13
+      Top = 47
+      Width = 36
+      Caption = 'Dolphin'
+      ParentColor = False
+    end
+    object LabelFoxCount: TLabel
+      Left = 110
+      Height = 13
+      Top = 24
+      Width = 6
+      Alignment = taRightJustify
+      Caption = '0'
+      ParentColor = False
+    end
+    object LabelDolphinCount: TLabel
+      Left = 110
+      Height = 13
+      Top = 48
+      Width = 6
+      Alignment = taRightJustify
+      Caption = '0'
+      ParentColor = False
+    end
+  end
+  object Button1: TButton
+    Left = 624
+    Height = 25
+    Top = 400
+    Width = 75
+    Caption = 'Button1'
+    OnClick = Button1Click
+    TabOrder = 4
+  end
+end

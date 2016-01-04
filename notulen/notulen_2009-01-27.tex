@@ -1,0 +1,62 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage{a4wide,graphicx,fancyhdr,wrapfig,tabularx,amsmath,amssymb,subfig}
+\usepackage{sidecap}
+%----------------------- Macros and Definitions --------------------------
+
+\setlength\headheight{20pt}
+\addtolength\topmargin{-10pt}
+\addtolength\footskip{20pt}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\ch}{\mathcal{CH}}
+
+\newcommand{\exercise}[1]{\noindent{\bf Exercise #1:}}
+\newenvironment{solution}{\begingroup\Solenv}{\END\endgroup}
+\def\Solenv{\vspace{.5\baselineskip}\penalty100\advance\leftskip by\parindent
+  \advance\leftmargini by\parindent
+  \Sol\ \ignorespaces}
+\def\Sol{\noindent{\bf Solution\/:}\nobreak}
+\def\END{\unskip~\medbreak\medbreak\medbreak}
+\def\qed{\hfill$\Box$}
+
+\fancypagestyle{plain}{%
+\fancyhf{} \fancyfoot[RO,LE]{\sffamily\bfseries\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+}
+
+\pagestyle{fancy} \fancyhf{} \fancyfoot[RO,LE]{\sffamily\bfseries\thepage}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%-------------------------------- Title ----------------------------------
+
+\title{\vspace{-\baselineskip}\sffamily\bfseries Notulen OGO 2.2 \\ Groep 2}
+\date{\today}
+
+%--------------------------------- Text ----------------------------------
+
+\begin{document}
+\maketitle
+
+\section{Algemeen}
+- Afspraak met tutor: iedere dinsdag 14.30. \\
+- OGO repository etc.: http://projexy.nl/?p=thuis
+
+\section{Opdeling groepen}
+Groep A:
+- Anson van Rooij
+- Dion Jansen
+- Edin Dudojevic
+\newline
+Groep B:
+- Etienne van Delden
+- Jeroen Habraken
+- Stef Louwers
+
+\section{Afspraken}
+Voorzitter: Dion Jansen \\
+Vertegenwoordiger: Anson van Rooij \\
+Notulist: Edin Dudojevic \\
+
+\end{document} 

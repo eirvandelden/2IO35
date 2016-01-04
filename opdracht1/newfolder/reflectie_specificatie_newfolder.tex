@@ -1,0 +1,49 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage{a4wide,amsmath,amssymb,lists,verbatim}
+%\usepackage{sidecap}
+
+\begin{document}
+   \begin{titlepage}
+        {\ }\\[5.0cm]
+        { {\Large Verslag OGO 2.2 voorjaar 2009}}\\[0.2cm]
+        {\bf \Huge Reflectie specificatie \& implementatie}\\[0.1cm]
+        { {\Large {Technische informatica, TU/e} }}\\[1.0cm]
+        {\ Eindhoven, \today }\\[0.2cm]
+        \begin{flushright}
+            {\bf {\small Groep 2b }}\\[0.0cm]
+            {\em {\small Edin Dudojevic, 0608206}}\\
+            {\em {\small Dion Jansen, 0590077 }}\\
+            {\em {\small Anson van Rooij, 0596312}}\\[0.5cm]
+        \end{flushright}
+    \end{titlepage}
+\section{Specification}
+\subsection{General}
+\begin{itemize}
+    \item The use of for example $A$ and $A'$ before- and after-states of variable $A$ is not part of Hoare-tripling. It's part of the specification language $\mathbb{Z}$ and is meaningless in the way the group used it in their specification.
+    \item As stated before, the group used $A$ and $A'$ to denote before- and after-states, but they used it wrong. Instead of assigning a value to $A'$ to denote an after-state they assigned a value to $A$ in the post-conditions.
+\end{itemize}
+\subsection{Add}
+\begin{itemize}
+    \item $(\neg n \inlist A)$ was used in the post-condition, where $n \in \mathbb{Z}$. What is a non-integer?
+\end{itemize}
+\subsection{Sort}
+\begin{itemize}
+    \item As stated before $A$ and $A'$ were used wrong. The post-condition of this procedure required the ordering of $A$, but since $A'$ is the after-state $A'$ is supposed to be ordered instead. Now we could order the array $A$ and return $A'$ which is, according to the precondition, the same as the unordered $A$ in the pre-condition.
+\end{itemize}
+\subsection{Median}
+\begin{itemize}
+    \item No $A'$ used in post-condition, so no after-state?
+    \item Function will return the wrong element from the array A. When the number of elements in $A$ is even the function will return the element just above the middle element.
+\end{itemize}
+
+\section{Implementation}
+\subsection{Code}
+\begin{verbatim}
+function middelste_derde_macht(A: Array of Integer): Integer;
+begin
+    middelste_derde_macht := -1
+end;
+\end{verbatim}
+\subsection{Comments}
+No comments. Due to our small fault in the specification, this implementation is correct $\ddot\smile$.
+\end{document} 

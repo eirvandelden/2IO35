@@ -1,0 +1,97 @@
+%
+%  untitled
+%
+%  Created by Etienne van Delden on 2009-03-24.
+%  Copyright (c) 2009 __MyCompanyName__. All rights reserved.
+%
+\documentclass[]{article}
+
+% Use utf-8 encoding for foreign characters
+\usepackage[utf8]{inputenc}
+
+% Setup for fullpage use
+\usepackage{fullpage}
+
+% Uncomment some of the following if you use the features
+%
+% Running Headers and footers
+%\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+% Multipart figures
+%\usepackage{subfigure}
+
+% More symbols
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{latexsym}
+
+% Surround parts of graphics with box
+\usepackage{boxedminipage}
+
+% Package for including code in the document
+\usepackage{listings}
+
+% If you want to generate a toc for each chapter (use with book)
+%\usepackage{minitoc}
+
+% This is now the recommended way for checking for PDFLaTeX:
+\usepackage{ifpdf}
+
+%\newif\ifpdf
+%\ifx\pdfoutput\undefined
+%\pdffalse % we are not running PDFLaTeX
+%\else
+%\pdfoutput=1 % we are running PDFLaTeX
+%\pdftrue
+%\fi
+
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage{graphicx}
+\fi
+\title{A LaTeX Article}
+\author{  }
+
+\date{2009-03-24}
+
+\begin{document}
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.eps, .jpg}
+\fi
+
+\maketitle
+
+
+\begin{abstract}
+\end{abstract}
+
+\section{Introduction}
+
+\begin{itemize}
+  \item m=n=0, geen minimum groote
+  \item $\N ipv \N^{+} \=\>m$ en n kunnen 0 zijn, dan heb je leeg domein.
+  \item Niet duidelijk dat $\D$ hetzelfde is als bij 2.1.5
+  \item Lelijk gespecificeerd waardes (iedere waarde heet altijd 2 situaties)
+  \item Geen expleciete maximale hoeveelheid hintvakken. Alle vakken kunnen een hintvak zijn.
+  \item Tegenspraak Hintvakken: het paar (i,i) spreekt zichzelf tegen.
+  \item de $\forall{}$ hebben door elkaar hoofdletters/kleine letters
+  \item $\beta$ is niet gespecificeerd (het aantal)
+  \item $\forall$ (laatste) is niet netjes.
+  \item Verplaatsen van spelers is ranzig gedefinieerd.
+  \item Rotatietransport: Het vak van de transport verandert, niet de speler.
+  \item sectie spel niet gedef in INI file
+  \item identifier != indentefier
+  \item ip adress in INI file is lelijk gespecificeerd. 127.000.000.001, niet 127.1
+  \item Wacht op bericht van controller naar Spel afgelopen heeft geen trigger
+  \item Fairness door Controller maar 1 bericht te sturen, anders kan het stuk.
+  \item Flowchatr: spel afgelopen (rechts) er is geen bericht 3.5.6.1b, 3.5.6.3b
+\end{itemize}
+
+\bibliographystyle{plain}
+\bibliography{}
+\end{document}

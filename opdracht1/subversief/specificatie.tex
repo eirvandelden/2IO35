@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\usepackage{amssymb, amsmath}
+\usepackage{lists}
+
+\author{Etienne van Delden \\ Jeroen Habraken \\ Stef Louwers}
+\title{OGO 2.2 Groep 2 \\ Specificatie opdracht 1b}
+
+\setlength{\topmargin}{0cm}
+\setlength{\parskip}{1em}
+\setlength{\parindent}{0cm}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+A pascal unit with the name `Process' must be made, containing the procedures and functions defined in the following section.
+
+The specification language used is `Hoare logic'.
+
+In this specification we use a (global) variable A, wich is a list of integers, initially empty.
+
+\section{Functions}
+\subsection{Add(n)}
+Pascal function declaration: \\
+\texttt{procedure Add (var n : integer);}
+
+Specification: \\
+\begin{math}
+\{ A = A' \land n \in \mathbb{Z} \} \\
+Add(n) \\
+\{ (((\exists x : x \in \mathbb{Z} : n = x^3) \land (\neg n \inlist A)) \implies (A = A' \concat [n])) \land \\
+((\neg(\exists x : x \in \mathbb{Z} : n = x^3) \lor (n \inlist A)) \implies (A = A')) \}
+\end{math}
+
+\subsection{Sort()}
+Pascal function declaration: \\
+\texttt{procedure Sort ();}
+
+Specification: \\
+\begin{math}
+\{ A = A' \} \\
+Sort() \\
+\{ ( \forall i \in \mathbb{N} : 0 \leq i < \#A - 1 : A[i] \leq A[i+1] ) \land \\
+(\forall n \in \mathbb{N} : \#\{i | 0 \leq i < \#A \land A[i] = n\} = \#\{i | 0 \leq i < \#A' \land A'[i] = n\}) \}
+\end{math}
+
+\subsection{Median()}
+Pascal function declaration: \\
+\texttt{function Median () : integer;}
+
+Specification: \\
+\begin{math}
+\{ ( \forall i \in \mathbb{N} : 0 \leq i < \#A - 1 : A[i] \leq A[i+1] ) \} \\
+Median() \\
+\{ (\#A > 0 \implies result = A[\: \lfloor \frac{\#A}{2} \rfloor \:]) \land (\#A = 0 \implies result = nil) \}
+\end{math}
+
+Returns: \\
+The value of `result' must be returned by the Median function.
+
+\end{document}

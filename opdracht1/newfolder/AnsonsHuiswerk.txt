@@ -1,0 +1,43 @@
+Function OneBee ( A : array )
+pre: ( A a : a C A : a C N )
+post: 
+
+  (
+
+    { er is een derdemacht b waarvoor geldt dat 
+
+    ( het aantal indexen in A met kleinere derdemachten d waar ( er is geen zelfde getal d op een lagere index ) ) 
+    even groot of net kleiner is dan 
+    ( het aantal indexen in A met grotere derdemachten d waar ( er is geen zelfde getal d op een lagere index ) ). 
+    
+      en die b wordt gereturned
+    }
+
+
+    ( E b : b C N : ( E x : x C N : b = x^3 ) ^ ( 
+      
+      ( # i : i C N : ( E d : d C N : A[i] = d ^ ( d < b ) ^ ( E x : x C N : d = x^3 ) ^ n(E j : j C N ^ j < i : A[j] = d ) ) ) =
+      ( # i : i C N : ( E d : d C N : A[i] = d ^ ( d > b ) ^ ( E x : x C N : d = x^3 ) ^ n(E j : j C N ^ j < i : A[j] = d ) ) ) 
+
+      V
+      
+      ( # i : i C N : ( E d : d C N : A[i] = d ^ ( d < b ) ^ ( E x : x C N : d = x^3 ) ^ n(E j : j C N ^ j < i : A[j] = d ) ) ) = 
+    ( ( # i : i C N : ( E d : d C N : A[i] = d ^ ( d > b ) ^ ( E x : x C N : d = x^3 ) ^ n(E j : j C N ^ j < i : A[j] = d ) ) ) + 1 ) 
+
+    ^ b wordt gereturned
+
+    )
+
+    
+  )
+
+V 
+
+  ( 
+
+    { er is geen derdemacht } 
+    n( E a : a C A : ( E x : x C N : a = x^3 ) ) 
+
+    { er wordt niet gereturned }
+
+  ) 

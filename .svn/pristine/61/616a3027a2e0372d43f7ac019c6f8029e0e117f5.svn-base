@@ -1,0 +1,16 @@
+\section{Speelveld}\label{sec:speelveld} % (fold)
+
+
+\begin{enumerate}
+
+ \item hoogte, breedte $ ~ \in \{ x \in \mathbb{N} : x \geq 3 \wedge x~
+       \textbf{mod} ~2 = 1: x \}$
+ \item $speelveldco$\"o$rdinaten = \{ (x,y) \in \mathbb{N}^2 : x
+\leq$ breedte $ ~ \wedge ~ y \leq $ hoogte $ : (x,y) \} $
+ \item $buur: \mathbb{N} \times \mathbb{N} \sim \mathbb{N} \times \mathbb{N} $ \\
+       $(x_{1},y_{1})buur(x_{2},y_{2}) \Leftrightarrow (x_{1} - x_{2})^2 + (y_{1} - y_{2})^2 = 1$
+\item $looppad =  \{ (x_{1}, y_{1}) | \exists _{x_{2}, y_{2}} [ (x_{2}, y_{2}) \in looppad | \exists _{n} [ n : n \in \mathbb{N}^+ : (x_{1},y_{1})buur^n(x_{2},y_{2}) ] ] \} $
+ \item \emph{muren} = \emph{speelveldco\"ordinaten} $\setminus \emph{looppad}$
+ \item startpositie $\in$ \emph{looppad}
+\end{enumerate}
+% section speelveld (end)

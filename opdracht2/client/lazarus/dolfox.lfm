@@ -1,0 +1,100 @@
+object Form1: TForm1
+  Left = 485
+  Height = 622
+  Top = 74
+  Width = 832
+  ActiveControl = EditKey
+  Caption = 'DolFoxGame'
+  ClientHeight = 622
+  ClientWidth = 832
+  KeyPreview = True
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  ParentFont = False
+  LCLVersion = '0.9.26'
+  object Label1: TLabel
+    Left = 632
+    Height = 16
+    Top = 52
+    Width = 20
+    Caption = 'Key'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 633
+    Height = 16
+    Top = 92
+    Width = 37
+    Caption = 'Mouse'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 633
+    Height = 16
+    Top = 133
+    Width = 49
+    Caption = 'Selection'
+    ParentColor = False
+  end
+  object Occupant: TLabel
+    Left = 633
+    Height = 16
+    Top = 172
+    Width = 53
+    Caption = 'Occupant'
+    ParentColor = False
+  end
+  object DrawGrid1: TDrawGrid
+    Left = 8
+    Height = 602
+    Top = 8
+    Width = 608
+    ColCount = 50
+    DefaultColWidth = 12
+    DefaultRowHeight = 12
+    FixedColor = clBtnFace
+    FixedCols = 0
+    FixedRows = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goSmoothScroll]
+    ParentColor = False
+    RowCount = 50
+    TabOrder = 0
+    OnDrawCell = DrawGrid1DrawCell
+    OnSelectCell = DrawGrid1SelectCell
+  end
+  object EditKey: TEdit
+    Left = 723
+    Height = 23
+    Top = 47
+    Width = 80
+    TabOrder = 1
+  end
+  object EditMouse: TEdit
+    Left = 723
+    Height = 23
+    Top = 89
+    Width = 80
+    TabOrder = 2
+  end
+  object EditSelectionX: TEdit
+    Left = 720
+    Height = 23
+    Top = 129
+    Width = 37
+    TabOrder = 3
+  end
+  object EditSelectionY: TEdit
+    Left = 766
+    Height = 23
+    Top = 129
+    Width = 37
+    TabOrder = 4
+  end
+  object EditOccupant: TEdit
+    Left = 724
+    Height = 23
+    Top = 168
+    Width = 80
+    TabOrder = 5
+  end
+end

@@ -1,0 +1,21 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage{a4wide,amsmath,amssymb}
+%\usepackage{sidecap}
+
+\begin{document}
+\begin{center}
+{\Huge \textbf{Specificatie}}\\
+{\Large middelste\_derde\_macht }
+\end{center}
+\section{Introductie}
+Het is de bedoeling dat jullie een functie met de naam {\sc middelste\_derde\_macht} gaan implementeren. Deze functie moet voldoen aan de postconditie zoals deze beschreven is in de volgende sectie.
+
+\section{Formele specificatie}
+\textbf{function} middelste\_derde\_macht(\textbf{A}: Array of Integer): Integer; \\
+%\textbf{Pre:} $(\forall a : a \in A : a \in \mathbb{Z} )$ \\
+\textbf{Pre:} \textbf{True}\\
+\textbf{Post:} $B=[a : a \in A : \sqrt[3]{a} \in \mathbb{Z}]$ and it holds: \\
+$(((\forall_j : 0 \leq j < \#B-1 : B(j) < B(j+1)) \vee (\#B = 1))) \wedge$\\
+$(((\#B \neq 0) \Rightarrow$ \textbf{return} $B( \lfloor{(\#B)/2} \rfloor)) \vee ((\#B = 0) \Rightarrow $ \textbf{return} $-1))$
+
+\end{document} 

@@ -1,0 +1,8 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage{a4wide,graphicx,fancyhdr,wrapfig,tabularx,amsmath,amssymb,clrscode}
+\usepackage[english]{babel}
+\begin{document}
+ret: $B( \lfloor{(\#B)/2} \rfloor )$ where $B=[a : a \in A : \sqrt[3]{a} \in \mathbb{N}]$ and for $B$ holds:\\
+$((\forall_j : 0 \leq j < \#B-1 : B(j) < B(j+1)) \vee (\#B)=1)$
+
+\end{document} 

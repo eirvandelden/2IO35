@@ -1,0 +1,349 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage{a4wide,amsmath,amssymb,verbatim,algorithm,oz}
+
+\begin{document}
+\begin{abstract}
+  This document contains the specification for the board module for our game.
+\end{abstract}
+
+\section{The specification}
+\subsection{The Board} % (fold)
+\label{sub:the_board}
+\begin{class}{Board}
+% ============= TYPES ==============
+Surface == Water | Land \\
+Occupant == Fox | Dolphin | Empty \\
+Player == Fox | Dolphin \\
+NumberOfPlayers == 0 | 1 | 2 \\
+Status == WaitingForPlayers | InGame | EndGame \\
+Tile: Occupant \times Surface \\
+Coordinate: \mathbb{N} \times \mathbb{N} \\
+size: BoardSize \\
+status: Status \\
+numberOfPlayers: NumberOfPlayers \\
+floodstate: \mathbb{N}\\
+Player1Time: Timer \\
+Player2Time: Timer \\
+% ============= AXIOMS =============
+\begin{axdef}
+    MinBoardSize: \mathbb{N} \\
+    \ST
+    MinBoardSize = 10
+\end{axdef} \\
+\begin{axdef}
+    MaxBoardSize: \mathbb{N} \\
+    \ST
+    MaxBoardSize = 50
+\end{axdef} \\
+\begin{axdef}
+    BoardSize : \mathbb{N}
+    \ST
+    MinBoardSize \leq BoardSize \leq MaxBoardSize
+\end{axdef} \\
+% ============= FIELDS =============
+\begin{axdef}
+board: Coordinate \ffun Tile \\
+\ST
+(\forall (x_1,y_1),(x_2,y_2) : \dom board |\\
+\ \ \ tile(x_1,y_1).1=Land \wedge tile(x_2,y_2).1=Land \bullet (x_1,y_1)$path$(x_2,y_2))
+\end{axdef}\\
+% ============= INIT ===============
+\end{class} \\
+
+Where $(x_1,y_1)path(x_2,y_2)$ is defined as: there exists a path containing only land tiles from $(x_1,y_1)$ to $(x_2,y_2)$. A path is formed by moving only left, right, up or down over the board, moving from one tile to another. \\ % kan recursief?
+
+All functions in the board class are specified and explained in sections \ref{sub:helpful_functions} to \ref{sub:moving}
+
+% subsection the_board (end)
+
+\subsection{Helpful Functions} % (fold)
+\label{sub:helpful_functions}
+
+We have added a number of different functions that will only be called by other functions. These are solely used by the board module. \\ \\
+
+\subsubsection{numberOfOccupants} % (fold)
+\label{ssub:numberofoccupants}
+\begin{schema}{numberOfOccupants}
+    t : Tile \\
+    o? : Occupant \\
+    n! : \mathbb{N} \\
+    \ST
+    t \in \ran board \wedge t.1=o? \\
+    n! = \#(board \triangleright \{t\}) \\
+\end{schema}\\
+ Returns the number of occupants of the given type. \\
+
+% subsubsection numberofoccupants (end)
+
+\subsubsection{numberOfSurfaces} % (fold)
+\label{ssub:numberofsurfaces}
+\begin{schema}{numberOfSurfaces}
+    t : Tile \\
+    s? : Surface \\
+    n! : \mathbb{N} \\
+    \ST
+    t \in \ran board \wedge t.2=s? \\
+    n! = \#(board \triangleright \{t\}) \\
+\end{schema}\\
+ Returns the number of surfaces of the given type. \\
+% subsubsection numberofsurfaces (end)
+
+\subsubsection{island} % (fold)
+\label{ssub:island}
+\begin{schema}{island}
+    t : Tile \\
+    i! : Coordinate \ffun Tile  \\
+    \ST
+    (t \in \ran board \wedge t.2=Land) \\
+    i! = board \triangleright \{t\} \\
+\end{schema}\\
+Returns the set of coordinates that make up the island. \\
+% subsubsection island (end)
+
+\subsubsection{tile} % (fold)
+\label{ssub:tile}
+\begin{schema}{tile}
+    x? : \mathbb{N} \\
+    y? : \mathbb{N} \\
+    t : Tile \\
+    o! : Tile  \\
+    \ST
+    (t \in \ran ( (x,y) \triangleleft board ) \\
+    o! = t \\
+\end{schema}\\
+Returns the tile for the given coordinate.
+
+% subsubsection tile (end)
+
+% subsection helpful_functions (end)
+
+\subsection{Initialisation} % (fold)
+\label{sub:initialisation}
+\begin{schema}{INIT}
+    status' = WaitingForPlayers \\
+    numberOfPlayers' = 0 \\
+    floodstate' = 0\\
+    % 1<=#dol=#fox
+    NumberOfOccupants(Dolphin)=NumberOfOccupants(Fox)=BoardSize \\
+    % alle vossen op land en alle dolfijnen in water bij de start
+    (\forall (x,y): \dom board \bullet tile(x,y).1 = Land \Rightarrow tile(x,y).2 \neq Dolphin)\\
+    (\forall (x,y) : \dom board \bullet tile(x,y).1 = Water \Rightarrow tile(x,y).2 \neq Fox )\\
+\end{schema}\\
+\emph{INIT} initialises the board by setting all important variables. It guarantees that no Dolphin starts on Land and no Fox in the Water. Initially, there are 10 Foxes and 10 Dolphins
+
+% subsection initialisation (end)
+
+\subsection{Flood} % (fold)
+\label{sub:flood}
+\begin{schema}{Flood}
+    \Delta floodstate \\
+    \Delta island \\
+    \ST
+    floodstate' = (floodstate +1) \mod 6 \\
+    ((floodstate' \leq 2 \wedge (\#island' = \#island-boardsize) \vee \\
+    (floodstate' \geq 3 \wedge (\#island' = \#island+boardsize))
+\end{schema} \\
+\emph{Flood} is the function that deals with changing land to water and vice versa. When \emph{floodstate} is 0,1 or 2 there is a high tide. When \emph{floodstate} is 3,4,5 there is a low tide.
+
+% subsection flood (end)
+
+\subsection{Update Status} % (fold)
+\label{sub:update_status}
+\begin{schema}{UpdateStatus}
+    \ST
+    ((numberOfPlayers < 2) \wedge (Status = InGame)\\
+    \ \ \ Status' = EndGame) \vee\\
+    ((numberOfPlayers = 2) \wedge (Status = WaitingForPlayers)\\
+    \ \ \ Status' = InGame) \vee\\
+    ((numberOfPlayers = 2) \wedge (Status = Ingame) \wedge \\
+    \ \ \ (NumberOfOccupants(Dolphin)=0 \vee NumberOfOccupants(Fox)=0)\\
+    \ \ \ Status'=EndGame)\\
+\end{schema} \\
+
+The \emph{UpdateStatus} procedure checks when called if there is need for a state-change. It checks the number of players, the number of elements and in which state the game currently resides.
+
+If the number of players is smaller than $2$ but the game is \emph{InGame}, this means that a player has left the game while playing. The game needs to end and \emph{UpdateStatus} will set the \emph{Status} to \emph{EndGame} which means the only player left gets a message the game has ended and the board will no longer process messages from the clients.
+
+If the number of players is equal to $2$ and the \emph{Status} is equal to \emph{WaitingForPlayers} this means that the board was waiting for players, but it has them both now. So now the game can start and \emph{UpdateStatus} will set the \emph{Status} to \emph{InGame}. Now the players will get a message the game has started and the board will start processing messages received from the clients.
+
+If the number of players is equal to $2$ and the \emph{Status} is \emph{InGame} but one of the players has no animals anymore this means a player has won. Therefore the board will end the game by setting Status to \emph{EndGame}. The clients will receive a message that the game has ended and the board will no longer process messages from the clients.
+
+\subsection{Initialisation} % (fold)
+\label{sub:initialisation}
+
+\emph{INIT} initialises the board by setting all important variables. It guarantees that no Dolphin starts on Land and no Fox in the Water. Initially, there are 10 Foxes and 10 Dolphins
+
+% subsection initialisation (end)
+
+
+\subsection{Joining} % (fold)
+\label{sub:joining}
+
+\begin{schema}{Join}
+  PlayerType!: Char
+  \ST
+  (NumberOfPlayers = 0) \Rightarrow (PlayerType! = F \wedge NumberOfPlayers' = NumberOfPlayers+ 1) \\
+  (NumberOfPlayers = 1) \Rightarrow (PlayerType! = D \wedge NumberOfPlayers' = NumberOfPlayers + 1 \wedge\\ UpdateViews) \\
+  (NumberOfPlayers = 2) \Rightarrow (PlayerType! = R)
+\end{schema}
+
+When a request to join has been filed at the Board, it calls the function \emph{Join}.
+Join checks the current number of Players and acts accordingly; Assigns Foxes to that player when there are 0 players, assign Dolphins when 1 player has already joined or return Reject when there are 2 players already playing.
+
+% subsection joining (end)
+
+\subsection{Disconnecting} % (fold)
+\label{sub:disconnecting}
+
+\begin{schema}{Disconnect}
+  \ST
+  NumberOfPlayers' = NumberOfPlayers - 1 \\
+  UpdateViews \\
+\end{schema}
+
+\emph{Disconnect} disconnects a player. It lowers the number of players and changes the status. When a player leaves during a game, the other player automatically wins.
+
+% subsection disconnecting (end)
+
+\subsection{Taking Turns} % (fold)
+\label{sub:taking_turns}
+
+\begin{schema}{Turn}
+  MessageType?: Char \\
+  Player?: Char \\
+  from?: Coordinate \\
+  to?: Coordinate \\
+  status! : \mathbb{B} \\
+  \ST
+  ((Status = InGame) \wedge \\
+  ((player? = F) \wedge (MessageType? = M) \wedge (Player1Time = 0)) \Rightarrow \\
+   (TryMove( from?, to?, Fox) \wedge (Player1Time' = 1) )\\
+  ((player? = D) \wedge (MessageType? = M) \wedge (Player2Time = 0)) \Rightarrow \\ (TryMove( from?, to?, Dolphin) \wedge (Player1Time' = 1))\\
+  \vee IllegalMove \\
+\end{schema}
+The function \emph{Turn} handles fairness. It uses 2 timers, \emph{Player1Time} and \emph{Player2Time}. When a player requests a move, the timer is set on a pre-defined value and then TryMove is called. A player's turn ends when his timer has reached 0. The player is notified that he can Move again. Only when a player's time is 0, can a move be done. For taking turns, it does not matter whether a move is valid or not.\\
+The timers are not further specified in Z (because of Z restrictions): All timers should be lowered at specific intervals. When a PlayerTimer reaches 0, a message needs to be sent to the player that he may move again.
+
+% subsection taking_turns (end)
+
+\subsection{Moving} % (fold)
+\label{sub:moving}
+
+% ============= SCHEMAS ============
+% ===== nieuw stukje van eiji
+$TryMove \triangleq ( CanMove \wedge (Move  \wedge UpdateViews \wedge UpdateStatus)) \vee IllegalMove$ \\
+
+with \emph{CanMove} defined as: \\
+$CanMove \triangleq ( AdjacentTile \wedge diffBeast \wedge ( DolphinToSea \vee FoxMovement))$ \\
+
+\emph{TryMove} is called whenever a player wants to move. It first checks if the move is valid (by calling \emph{CanMove}). If it is, Move is executed (and checks wether there is now a winner), else a message is send to the player that he has made an invalid move.\\
+
+\emph{CanMove} consists of several smaller functions, to check if a move is valid or not, by checking the to? coordinate if it is adjacent, if there is a different occupant and if the creature being moved, moves according to it's movement set.
+
+\subsubsection{Adjacent Tiles} % (fold)
+\label{ssub:adjacent_tiles}
+\begin{schema}{AdjacentTile}
+    from? : Coordinate \\
+    to? : Coordinate \\
+    report! : \mathbb{B} \\
+    \ST
+    report! = (| from.1 - to.1 | + | from.2 - to.2 | = 1) \\
+\end{schema}
+\emph{AdjacentTile} checks if the movement requested is to an adjacent tile.
+
+% subsubsection adjacent_tiles (end)
+
+\subsubsection{Different Beasts} % (fold)
+\label{ssub:different_beasts}
+\begin{schema}{diffBeast}
+    from? : Coordinate \\
+    to? : Coordinate \\
+    report! : \mathbb{B} \\
+    \ST
+    report! = ( tile(from.1, from.2).1 \neq tile(to.1, to.2).1 )
+\end{schema}
+\emph{diffBeast} checks the occupant of the \emph{to} tile. If it is different than the creature being moved, than it is a valid move. Please note that ``\emph{Empty}'' is also an occupant and thus, this checks both legal movements to an empty spot and eating a different creature.
+
+% subsubsection different_beasts (end)
+
+\subsubsection{Dolphin From Sea To Sea} % (fold)
+\label{ssub:dolphin_from_sea_to_sea}
+\begin{schema}{DolphinToSea}
+    from? : Coordinate \\
+    to? : Coordinate \\
+    player?: Player \\
+    report! : \mathbb{B} \\
+    \ST
+    report! = tile(to.1, to.2).2 = Water \\
+    \wedge tile(from.1, from.2).2 = Water \\
+    \wedge tile(from.1, from.2).1 = Dolphin\\
+\end{schema}
+\emph{DolphinToSea} looks to the creature that is being moved, checks if it is a Dolphin in the Water and if it is moving to Water. A Dolphin cannot strand itself on land, nor can it move when on land.
+% subsubsection dolphin_from_sea_to_sea (end)
+
+\subsubsection{Movements of the fox} % (fold)
+\label{ssub:movements_of_the_fox}
+
+\begin{schema}{FoxMovement}
+    from? : Coordinate \\
+    to? : Coordinate \\
+    player? : Player \\
+    report! : \mathbb{B} \\
+    \ST
+    Neighbourhood = \{ z \in dom( board ) : \exists{x,y} (x,y \in \mathbb{N} : ( (from.1 - x) + (from.2 - y) \leq 2) \wedge \\ z.1 = x \wedge z.2=y : z) \} \\
+      report! = (player? = Fox) \wedge \\
+      (tile(from.1, from.2).1=Fox) \wedge \\
+      \exists{z} ( z \in Neighbourhood : ( tile(z.1, z.2).2=Land ) \wedge \\
+      ((tile(to.1, to.2).1 \neq Dolphin) \vee (tile(to.1, to.2).2 \neq Water))) \\
+\end{schema}
+\emph{FoxMovement} checks \emph{all} the possible movements of a Fox. A Fox can move on the land, into water, in water and to land. To only acception is when a Fox in the water tries to eat a Dolphin, that is not allowed. FoxMovement checks this by making a new set, with all tiles that this creature can reach if it would make two steps. If there is a land tile within this set, a Fox can move. If the Fox is on the land, this is always true. If it is in the Water, a land tile must be reachable. \\
+
+% subsubsection movements_of_the_fox (end)
+
+\subsubsection{Update Views} % (fold)
+\label{ssub:update_views}
+
+\emph{UpdateViews} calls a function in the Controller to send a new version of the Board to the Viewers, according to the specified protocol. \emph{(Note: there is no Z-schema associated with this specification)}
+
+% subsubsection update_views (end)
+
+\subsubsection{Move} % (fold)
+\label{ssub:move}
+
+\begin{schema}{Move}
+    player? : Player\\
+    from? : Coordinate\\
+    to? : Coordinate\\
+\ST
+tile(from.1, from.2)'.1=Empty \wedge tile(to.1, to.2)'.1=tile(from.1, from.2).1 \\
+\end{schema}
+\emph{Move} makes the requested move.
+
+% subsubsection move (end)
+
+<<<<<<< .mine
+\subsubsection{Check on Winner} % (fold)
+\label{ssub:check_on_winner}
+
+\begin{schema}{CheckWinner}
+  from?: Coordinate \\
+  to?: Coordinate \\
+  report!: \mathbb{B} \\
+  \ST
+  report' = \forall{x,y} ( (x,y) \in \mathbb{N} \wedge (x,y) \leq BoardSize : k \in board(\!| (x,y) |\!) \bullet k.1 = Empty )
+\end{schema}
+\emph{CheckWinner} does a check to see if the move we just made results in 1 player winning the game.
+
+% subsubsection check_on_winner (end)
+
+
+=======
+>>>>>>> .r264
+\subsubsection{Illegal Move} % (fold)
+\label{ssub:illegal_move}
+\emph{IllegalMove} calls a function in the Controller to send a message to the corresponding viewer that the player's move is invalid.
+% subsubsection illegal_move (end)
+
+% subsection moving (end)
+
+\end{document}

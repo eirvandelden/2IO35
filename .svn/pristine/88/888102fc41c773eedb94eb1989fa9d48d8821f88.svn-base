@@ -1,0 +1,42 @@
+\documentclass[11pt,oneside,a4paper]{article}
+\usepackage[dutch]{babel}
+
+\begin{document}
+\textbf{{\LARGE{Agenda Vergadering 3 februari 2009}}}\\ \\
+\textbf{Voorzitter}: Dion\\
+\textbf{Notulist}: Edin\\
+\begin{enumerate}
+    \item \textbf{Opening} 14:13
+        \subitem \textbf{Vaststellen aan- en afwezigheid}
+            \subsubitem Jeroen afwezig
+    \item \textbf{Definitief vaststellen van de agenda}
+        \subsubitem -
+    \item \textbf{Notulen}
+        \subitem \textbf{Bespreken van de notulen van de vorige vergadering}
+            \subsubitem Notulen mailen
+%    \item Ingekomen stukken
+%    \item Geplande mededelingen
+    \item \textbf{Overige mededelingen}
+        \subitem \textbf{Tutor}
+            \subsubitem - Feedback opdracht 1 gekregen:
+              \begin{itemize}
+                \item A' is een modelconstante, maar staat niet als dusdanig gedefinieerd.
+                \item Bij de specificatie van groep B is de post conditie true
+                \item implementatie van groep A is dus te sterk, skip is voldoende
+                \item implementatie van groep B is fout, want hij moet nil returnen ipv -1
+              \end{itemize}
+            \subsubitem - Introductie voor de modules mag uitgebreid
+            \subsubitem - Als er gebruik gemaakt moet worden van sockets, moet dat duidelijk gemaakt worden
+            \subsubitem - Het protocol moet duidelijk worden gespecificeerd
+            \subsubitem - Het is raadsaam ook scenario's te maken voor dingen die niet mogen gebeuren.
+              
+        \subitem \textbf{Groep}
+            \subsubitem -
+    \item \textbf{Planning}
+        \subitem \textbf{Opdracht 2}
+        \subsubitem Gebruik van sockets toegestaan mits duidelijk gespecificeerd
+    \item \textbf{W.v.t.t.k}
+        \subitem -
+    \item \textbf{Sluiting} 14:37
+\end{enumerate}
+\end{document} 

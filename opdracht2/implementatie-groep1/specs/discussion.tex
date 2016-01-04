@@ -1,0 +1,144 @@
+\documentclass[a4paper,twoside,11pt]{article}
+\usepackage{a4wide,amsmath,amssymb,verbatim,oz}
+\usepackage{algorithm}
+\usepackage[pdftex]{hyperref}
+
+\begin{document}
+   \begin{titlepage}
+        {\ }\\[5.0cm]
+        { {\Large OGO 2.2 spring 2009}}\\[0.2cm]
+        {\bf \Huge Discussion document}\\[0.1cm]
+        { {\Large {Technische informatica, TU/e} }}\\[1.0cm]
+        {\ Eindhoven, \today }\\[0.2cm]
+        \begin{flushright}
+            {\bf {\small Group 2 }}\\[0.0cm]
+            {\em {\small Etienne van Delden, 0618959}}\\
+            {\em {\small Edin Dudojevic, 0608206}}\\
+            {\em {\small Jeroen Habraken, 0586866}}\\
+            {\em {\small Dion Jansen, 0590077 }}\\
+            {\em {\small Stef Louwers, 0590864}}\\
+            {\em {\small Anson van Rooij, 0596312}}\\[0.5cm]
+        \end{flushright}
+    \end{titlepage}
+
+    \tableofcontents
+\newpage
+
+\section{Introduction} % (fold)
+\label{cha:introduction}
+
+In this document we discuss the specifications given to us to implement. These are the board specification by group 1 and our own specification of the player module.
+
+% chapter introduction (end)
+
+\section{Discussion Specification Board (Group 1)} % (fold)
+\label{cha:discussion_specification_board_group_1_}
+
+\subsection{Initialisatie} % (fold)
+\label{sec:initialisatie}
+
+  \subsubsection{Bord} % (fold)
+  \label{sub:bord}
+   That specification states that $m, n \in \mathbb{N} \wedge m,n < 100$. This means that \emph{m} can have any value from 99 down to and including 0. Choosing $m$ or $n$ as 0  leads to empty domains in some parts of the specification.\\
+   The minimum size of the board is $0 \times 0$ and then there is no coordinate (1,1). Choosing (1,1) as lower left coordinate is a strange choice, because it is ambiguous where the tiles $(0,n)$ and $(m,0)$ should be situated.
+  % subsection bord (end)
+
+  \subsubsection{Speler 2} % (fold)
+  \label{sub:speler_2}
+    From the specification, it is not clear that set $\mathbb{D}$ is not a local variable, but a global variable.
+  % subsection speler_2 (end)
+
+  \subsubsection{Hintvak} % (fold)
+  \label{sub:hintvak}
+    This part is correctly specified but in an appalling way.  $waarde_{1_{i}} $ and
+    $waarde_{2_{i}}$ are almost always in conflict with themselves. This means that the board module can choose to return any of the two directions.  \\ \\
+    There is no maximum to the number of \emph{hintvakken}. All tiles could be a \emph{hintvak}, which might be undesirable. \\ \\
+    There is a contradiction in the coordinates of the \emph{hintvakken}. There is an implicit for all quantifier in the text, namely: $\forall [i,j \in \mathbb{N}: (0 < T_{i} \leq m \land 0 < U_{i} \leq n \land 0 < T_{j} \leq m \land 0 < U_{j} \leq n)  \Rightarrow \neg (T_{i} = T_{j} \land U_{i} = U_{j}) ]$. \\
+    This quantifier is false when the when $T_{i} = T_{j}$ and $U_{i} = U_{j}$ is true. Now we have an empty domain and we can conclude anything we want. \\ \\
+    \emph{Note:} In the implementation we fixed this problem.
+
+  % subsection hintvak (end)
+  
+  \subsection{Rotatietransportbanden} % (fold)
+  \label{sub:rotatietransportbanden}
+    Lower case and uppercase variables are not consistently used. The for all statements defines lowercase variables, but uppercase are used in the rest of the statement.\\ \\
+    $\beta$, the number of \emph{rotatietransportbanden} is not defined. \\ \\
+    The predicate that says that no start and end tile of a \emph{rotatietransportband} may lie next to each other is poorly specified and quite unreadable, though correct. It is hardcoded and does not support easy adjustments, like adjusting that two tiles should be in between, instead of just one. \\
+    It is easier to say that the difference between coordinate should be more than one. \\ \\
+  % subsection rotatietransportbanden (end)
+  
+% section initialisatie (end)
+
+\subsection{Verloop} % (fold)
+\label{sec:verloop}
+
+  \subsubsection{Introductie} % (fold)
+  \label{sub:introduction}
+    The invariants say that the player is on a tile of the board. It does not say that that tile must be the tile the player has moved to, or was set on during initialization. Therefore, when a player requests to move, we may assume that the player is on any single tile of the board. This is a problem caused by the scope of the variables.
+    Example: Player 1 is on tile $(1,1)$ and requests to move up. The player is moved to $(1,2)$. Now Player 1 wants to move right. According to the invariant, we may assume that Player 1 is on tile $(1,1)$, so we move it to $(2,1)$. There is no actual assignment of movement, so the coordinates are not stored anywhere.
+   % subsection introduction (end)
+
+  \subsubsection{Rotatietransportbanden} % (fold)
+  \label{sub:rotatietransportbanden}
+
+    The specification says that the coordinate of a start tile should be changed, not the coordinates of the actual player. This leaves nothing on the old coordinates of the start tile, creating a virtual black hole. It also breaks one of the global invariants, namely that no end tile of a \emph{rotatietransportband} may have the same coordinate of the start tile.\\
+
+  % subsection rotatietransportbanden (end)
+
+  \subsubsection{Verplaatsen van speler 1/2} % (fold)
+  \label{sub:verplaatsen_van_speler_1_2}
+    The specification of how to move a player is too complex and unreadable. Checking what direction a player should move to could be done in a more generic way, like translating the direction to a coordinate pair.
+  % subsection verplaatsen_van_speler_1_2 (end)
+
+% section verloop (end)
+
+\subsection{Protocol} % (fold)
+\label{sec:protocol}
+
+  \subsubsection{Locatie} % (fold)
+  \label{sub:locatie}
+    It is not clear what ``x,y'' are. In the section about movement of players it is only said that the new coordinates are sent, which are undefined in the protocol. This is inconsistent with the way the direction is sent. \\ \\
+    The section ``spel'' is not defined in the INI file structure.\\
+  % subsection locatie (end)
+
+% section protocol (end)
+
+
+  \subsubsection{INI-file structuur} % (fold)
+  \label{sub:ini_file_structuur}
+
+    The specification of identifier is wrongly spelled (``indentifier''). \\ \\
+
+    \emph{Note:} According to the INI-file the ip address must be in blocks of 3 numbers. All ip numbers must look like 127.000.000.001. The ip adress 127.0.0.1, or shorter 127.1, are valid ip addresses, but cannot be used in the game as such. \\
+
+  % subsection ini_file_structuur (end)
+
+  \subsubsection{Flowchart} % (fold)
+  \label{sub:flowchart}
+    The arrow from ``Wacht op bericht van controller'' to ``Spel afgelopen'' does not have a trigger. Because of that, the controller can decide to end the game at any given time.\\ \\
+    When the game has ended, messages 3.5.6.1b, 3.5.6.3b, at the right of ``Spel afgelopen'', need to be send. These messages are not specified in the protocol. \\ \\
+    \emph{Note:} There will be fairness issues when the controller sends more than 1 message at a time. We assume that this is not the case.
+    
+  % subsection flowchart (end)
+
+  \subsubsection{Conclusion} % (fold)
+  \label{sub:conclusion}
+
+  The specification is complete, yet has minor errors with big consequences. We have found only a few errors, which are errors that are easily overlooked when writing it. It does lack, however, the flexibility to be adapted. For example, changing the way how players move requires changing the entire specification, instead of a single function. \\
+  The style of the specification consists of mostly natural language, where a mathematical formula might have been preferred. As an example, for all quantifiers have been implied instead of written explicitly in a mathematical formula. \\ \\
+  In the implementation, we have fixed all issues that are denoted in this document.
+
+  % subsection conclusion (end)
+
+% chapter discussion_specification_board_group_1_ (end)
+
+\section{Discussion Specification Players (Group 2)} % (fold)
+\label{cha:discussion_specification_players_group_2_}
+
+    The specification is written in such a way that it is almost actual code. It already gives the function definition and almost step for step instructions what the code needs to look like. This makes it debatable whether or not it is a real specification. \\ \\
+    Also, it is unclear where this module needs to be located, in the client or in a separate entity. \\ \\
+    
+    \emph{Note:} The specification of the player module is trivial, because of the exercise. That is why there are no more remarks about the specification.
+% chapter discussion_specification_players_group_2_ (end)
+
+\end{document}

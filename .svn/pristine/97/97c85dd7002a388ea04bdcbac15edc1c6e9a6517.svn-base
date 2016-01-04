@@ -1,0 +1,23 @@
+\documentclass[11pt,oneside,a4paper]{article}
+\usepackage[dutch]{babel}
+
+\begin{document}
+\textbf{{\LARGE{Agenda Vergadering 17 maart 2009}}}\\ \\
+\textbf{Voorzitter}: Dion\\
+\textbf{Notulist}: Edin\\
+\begin{enumerate}
+    \item \textbf{Opening} 15.45
+        \subitem \textbf{Vaststellen aan- en afwezigheid}
+    \item \textbf{Definitief vaststellen van de agenda}
+    \item \textbf{Notulen}
+        \subitem \textbf{Bespreken van de notulen van de vorige vergadering}
+    \item \textbf{Overige mededelingen}
+        \subitem \textbf{Tutor}
+        \subitem \textbf{Groep}
+            \subsubitem deadline vrijdag 23.59
+            \subsubitem Studentenoverleg: niet alles in Z te doen, meer gebruik van taal
+    \item \textbf{Planning}
+    \item \textbf{W.v.t.t.k}
+    \item \textbf{Sluiting} 15:55
+\end{enumerate}
+\end{document} 
